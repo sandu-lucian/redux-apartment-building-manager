@@ -7,7 +7,7 @@ import { bindActionCreators } from "redux";
 
 import { createFloor, deleteFloor, evacuateUsers } from "../../redux/actions";
 import Apartment from "./Apartment";
-import "./styles.css";
+import "./styles.scss";
 
 const Block = (props) => {
   const createNewFloor = () => {

@@ -1,6 +1,6 @@
 import React from "react";
 
-import "./styles.css";
+import "./styles.scss";
 
 const Apartment = ({ number, isOccupied, user }) => {
   if (isOccupied) {

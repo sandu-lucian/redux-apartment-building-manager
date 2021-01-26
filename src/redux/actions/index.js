@@ -1,4 +1,4 @@
-import { constants } from "../../constants";
+import { constants } from "../constants";
 
 export const createUser = (name, age, isAssigned) => {
   return {
