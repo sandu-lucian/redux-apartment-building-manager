@@ -8,7 +8,8 @@ import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { moveUser, fillApartment } from "../../redux/actions";
+import { moveUser } from "../../state/users/actions";
+import { fillApartment } from "../../state/apartments/actions";
 
 const MoveForm = (props) => {
   const [selectedUser, setSelectedUser] = useState("");
@@ -45,7 +46,7 @@ const MoveForm = (props) => {
       <Grid
         container
         direction="column"
-        justify="space-evenly"
+        justifyContent="space-evenly"
         alignItems="center"
         spacing={1}
       >

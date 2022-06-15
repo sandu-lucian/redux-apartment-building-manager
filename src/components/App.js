@@ -11,7 +11,13 @@ const App = () => {
   return (
     <Container>
       <Grid container>
-        <Grid item container direction="column" justify="space-evenly" xs>
+        <Grid
+          item
+          container
+          direction="column"
+          justifyContent="space-evenly"
+          xs
+        >
           <Grid item>
             <UserList />
           </Grid>
@@ -24,7 +30,13 @@ const App = () => {
           <Block />
         </Grid>
 
-        <Grid item container direction="column" justify="space-evenly" xs>
+        <Grid
+          item
+          container
+          direction="column"
+          justifyContent="space-evenly"
+          xs
+        >
           <MoveForm />
         </Grid>
       </Grid>

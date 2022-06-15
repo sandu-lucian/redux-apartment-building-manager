@@ -4,7 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 
-import { createUser } from "../../redux/actions";
+import { createUser } from "../../state/users/actions";
 
 const initialState = {
   name: "",

@@ -5,7 +5,8 @@ import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { createFloor, deleteFloor, evacuateUsers } from "../../redux/actions";
+import { createFloor, deleteFloor } from "../../state/apartments/actions";
+import { evacuateUsers } from "../../state/users/actions";
 import Apartment from "./Apartment";
 import "./styles.scss";
 
@@ -53,7 +54,7 @@ const Block = (props) => {
     <Grid
       container
       direction="column"
-      justify="space-between"
+      justifyContent="space-between"
       alignItems="center"
       spacing={4}
     >
@@ -61,7 +62,7 @@ const Block = (props) => {
         item
         container
         direction="row"
-        justify="space-evenly"
+        justifyContent="space-evenly"
         alignItems="center"
       >
         <Grid item>
