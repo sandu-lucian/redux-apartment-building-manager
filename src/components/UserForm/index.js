@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import { connect } from "react-redux";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import { useDispatch } from "react-redux";
 
-import { createUser } from "../../state/users/actions";
+import { createUser } from "../../state/usersSlice";
 
 const initialState = {
   name: "",
   age: "",
-  isAssigned: false,
 };
 
-const UserForm = (props) => {
+const UserForm = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState(initialState);
 
   const handleChange = (e) => {
@@ -21,8 +21,8 @@ const UserForm = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.createUser(formData.name, formData.age, formData.isAssigned);
-    setFormData({ ...initialState });
+    dispatch(createUser(formData.name, formData.age));
+    setFormData(initialState);
   };
 
   return (
@@ -61,4 +61,4 @@ const UserForm = (props) => {
   );
 };
 
-export default connect(null, { createUser })(UserForm);
+export default UserForm;
