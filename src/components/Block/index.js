@@ -1,53 +1,45 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
+import { useSelector, useDispatch } from "react-redux";
 
-import { createFloor, deleteFloor } from "../../state/apartments/actions";
-import { evacuateUsers } from "../../state/users/actions";
+import {
+  selectApartments,
+  createFloor,
+  deleteFloor,
+  MAX_APARTMENTS,
+} from "../../state/apartmentsSlice";
+import { evacuateUsers } from "../../state/usersSlice";
 import Apartment from "./Apartment";
 import "./styles.scss";
 
-const Block = (props) => {
-  const createNewFloor = () => {
-    if (props.apartments.length < 10) {
-      props.createFloor();
-    } else {
+const Block = () => {
+  const dispatch = useDispatch();
+  const apartments = useSelector(selectApartments);
+
+  const handleCreateFloor = () => {
+    if (apartments.length >= MAX_APARTMENTS) {
       alert("Nu poti crea mai mult de 10 apartamente!");
+      return;
     }
+    dispatch(createFloor());
   };
 
-  const deleteLastFloor = () => {
-    if (props.apartments.length > 0) {
-      const apsToDelete = props.apartments.slice(
-        props.apartments.length - 2,
-        props.apartments.length
-      );
-      const filledApsToEvacuate = apsToDelete.filter(
-        (ap) => ap.user.isAssigned === true
-      );
-
-      let usersToEvacuate = [];
-      for (let i = 0; i < filledApsToEvacuate.length; i++) {
-        usersToEvacuate.push(filledApsToEvacuate[i].user.name);
-      }
-
-      console.log(
-        "apsToDelete",
-        apsToDelete,
-        "filled",
-        filledApsToEvacuate,
-        "users",
-        usersToEvacuate
-      );
-
-      props.evacuateUsers([...usersToEvacuate]);
-      props.deleteFloor();
-    } else {
+  const handleDeleteFloor = () => {
+    if (apartments.length === 0) {
       alert("Nu exista apartamente!");
+      return;
     }
+    const apsToDelete = apartments.slice(apartments.length - 2);
+    const usersToEvacuate = apsToDelete
+      .filter((ap) => ap.occupied)
+      .map((ap) => ap.tenant.name);
+
+    if (usersToEvacuate.length > 0) {
+      dispatch(evacuateUsers(usersToEvacuate));
+    }
+    dispatch(deleteFloor());
   };
 
   return (
@@ -66,39 +58,26 @@ const Block = (props) => {
         alignItems="center"
       >
         <Grid item>
-          <Button onClick={createNewFloor}>Creeaza un nou etaj</Button>
+          <Button onClick={handleCreateFloor}>Creeaza un nou etaj</Button>
         </Grid>
         <Grid item>
-          <Button onClick={deleteLastFloor}>Sterge un etaj</Button>
+          <Button onClick={handleDeleteFloor}>Sterge un etaj</Button>
         </Grid>
       </Grid>
       <Grid item>
         <Paper elevation={3} className="block">
-          {props.apartments.map((ap, index) => {
-            return (
-              <Apartment
-                number={ap.name}
-                isOccupied={ap.occupied}
-                user={ap.user}
-                key={index}
-              />
-            );
-          })}
+          {apartments.map((ap) => (
+            <Apartment
+              key={ap.id}
+              number={ap.name}
+              isOccupied={ap.occupied}
+              tenant={ap.tenant}
+            />
+          ))}
         </Paper>
       </Grid>
     </Grid>
   );
 };
 
-const mapStateToProps = (state) => {
-  return { apartments: state.apartments };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(
-    { createFloor, deleteFloor, evacuateUsers },
-    dispatch
-  );
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Block);
+export default Block;

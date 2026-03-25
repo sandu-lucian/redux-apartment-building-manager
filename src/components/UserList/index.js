@@ -1,13 +1,12 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import { connect } from "react-redux";
+import Grid from "@mui/material/Grid";
+import { useSelector } from "react-redux";
 
+import { selectUsers } from "../../state/usersSlice";
 import UserData from "./UserData";
 
-const UserList = ({ users }) => {
-  const userList = users.map((user, index) => {
-    return <UserData user={user} key={index} />;
-  });
+const UserList = () => {
+  const users = useSelector(selectUsers);
 
   return (
     <Grid container direction="column" alignItems="center" spacing={3}>
@@ -15,16 +14,14 @@ const UserList = ({ users }) => {
         <h2>Locatari</h2>
       </Grid>
       <Grid item>
-        <ol>{userList}</ol>
+        <ol>
+          {users.map((user) => (
+            <UserData user={user} key={user.name} />
+          ))}
+        </ol>
       </Grid>
     </Grid>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    users: state.users,
-  };
-};
-
-export default connect(mapStateToProps)(UserList);
+export default UserList;

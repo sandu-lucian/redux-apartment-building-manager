@@ -1,42 +1,32 @@
-import React, { useState, useEffect } from "react";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React, { useState } from "react";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import { useSelector, useDispatch } from "react-redux";
 
-import { moveUser } from "../../state/users/actions";
-import { fillApartment } from "../../state/apartments/actions";
+import { selectUnassignedUsers, moveUser, selectUsers } from "../../state/usersSlice";
+import {
+  selectAvailableApartments,
+  fillApartment,
+} from "../../state/apartmentsSlice";
 
-const MoveForm = (props) => {
+const MoveForm = () => {
+  const dispatch = useDispatch();
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedApartment, setSelectedApartment] = useState("");
 
-  const [unassignedUsers, setUnassignedUsers] = useState([]);
-  const [unusedApartments, setUnusedApartments] = useState([]);
-
-  useEffect(() => {
-    const notUsedAps = props.apartments.filter((ap) => ap.occupied === false);
-
-    setUnusedApartments([...notUsedAps]);
-
-    const notAssignedUsers = props.users.filter(
-      (user) => user.isAssigned === false
-    );
-
-    setUnassignedUsers([...notAssignedUsers]);
-  }, [props.apartments, props.users]);
+  const unassignedUsers = useSelector(selectUnassignedUsers);
+  const availableApartments = useSelector(selectAvailableApartments);
+  const allUsers = useSelector(selectUsers);
 
   const handleSubmit = (e) => {
-    console.log(props);
     e.preventDefault();
-    const userToMove = props.users.find((user) => user.name === selectedUser);
-    props.moveUser(selectedUser);
-    props.fillApartment(userToMove, selectedApartment);
-
+    const userToMove = allUsers.find((u) => u.name === selectedUser);
+    dispatch(moveUser(selectedUser));
+    dispatch(fillApartment({ user: userToMove, apartment: selectedApartment }));
     setSelectedUser("");
     setSelectedApartment("");
   };
@@ -58,13 +48,11 @@ const MoveForm = (props) => {
               onChange={(e) => setSelectedUser(e.target.value)}
               required
             >
-              {unassignedUsers.map((user, index) => {
-                return (
-                  <MenuItem value={user.name} key={index}>
-                    {user.name}
-                  </MenuItem>
-                );
-              })}
+              {unassignedUsers.map((user) => (
+                <MenuItem value={user.name} key={user.name}>
+                  {user.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
@@ -77,16 +65,15 @@ const MoveForm = (props) => {
               onChange={(e) => setSelectedApartment(e.target.value)}
               required
             >
-              {unusedApartments.map((apt, index) => {
-                return (
-                  <MenuItem value={apt.name} key={index}>
-                    {apt.name}
-                  </MenuItem>
-                );
-              })}
+              {availableApartments.map((apt) => (
+                <MenuItem value={apt.name} key={apt.id}>
+                  {apt.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
+
         <Grid item container>
           <Button variant="contained" color="primary" fullWidth type="submit">
             Muta in apartament
@@ -97,15 +84,4 @@ const MoveForm = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    users: state.users,
-    apartments: state.apartments,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ moveUser, fillApartment }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MoveForm);
+export default MoveForm;
